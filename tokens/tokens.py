@@ -1,0 +1,26 @@
+# tokens/tokens.py
+
+tokens = (
+	'NUMERO',
+	'MAIS',
+	'MENOS',
+	'VEZES',
+	'DIVIDIR',
+  'COMENTARIO',
+	'INTEIRO',
+	'ID',
+	'SE',
+	'ENTAO',
+	'SENAO',
+	'REPITA',
+	'ATE',
+	'FIM',
+	'RETORNA',
+	'ABRE_PARENTES',
+	'FECHA_PARENTES',
+	'RECEBE',
+	'IGUAL',
+	'MAIOR',
+	'MENOR',
+	'DOIS_PONTOS',
+)
