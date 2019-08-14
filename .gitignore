@@ -1,4 +1,7 @@
+# .gitignore
 
 **/__pycache__
 **/ply-master/
 **/ply/
+
+.vscode/
