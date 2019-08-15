@@ -1,20 +1,39 @@
 # patterns/patterns.py
 
-t_MAIS = r'\+'
-t_MENOS = r'-'
-t_VEZES = r'\*'
-t_DIVIDIR = r'/'
-t_ABRE_PARENTES = r'\('
-t_FECHA_PARENTES = r'\)'
-t_DOIS_PONTOS = r'\:'
-t_RECEBE = r'\:\='
+t_ATRIBUICAO = r'\:\='
+
+t_ADICAO = r'\+'
+t_SUBTRACAO = r'-'
+t_MULTIPLICACAO = r'\*'
+t_DIVISAO = r'\/'
+
+t_MAIOR_IGUAL = r'\>\='
+t_MENOR_IGUAL = r'\<\='
+t_DIFERENTE = r'\<\>'
 t_IGUAL = r'\='
 t_MAIOR = r'\>'
 t_MENOR = r'\<'
 
+t_E = r'\&\&'
+t_OU = r'\|\|'
+
+t_NEGACAO = r'\!'
+
+t_ABRE_PARENTES = r'\('
+t_FECHA_PARENTES = r'\)'
+t_ABRE_CHAVES = r'\{'
+t_FECHA_CHAVES = r'\}'
+t_DOIS_PONTOS = r'\:'
+t_VIRGULA = r'\,'
+
 t_ignore = ' \t'
 
-def t_NUMERO(t):
+def t_NUM_FLUTUANTE(t):
+	r'\d+\.\d+'
+	t.value = float(t.value)
+	return t
+
+def t_NUM_INTEIRO(t):
 	r'\d+'
 	t.value = int(t.value)
 	return t

@@ -1,18 +1,40 @@
 # tokens/tokens.py
 
 tokens = [
-	'FECHA_PARENTES',
-	'ABRE_PARENTES',
-  'COMENTARIO',
-	'NUMERO',
-	'DIVIDIR',
-	'VEZES',
-	'MENOS',
-	'MAIS',
-	'ID',
+	'ATRIBUICAO',
+
+	# Operadores aritméticos
+	'ADICAO',
+	'SUBTRACAO',
+	'MULTIPLICACAO',
+	'DIVISAO',
+
+	# Operadores relacionais
+	'MAIOR_IGUAL',
+	'MENOR_IGUAL',
+	'DIFERENTE',
+	'IGUAL',
 	'MAIOR',
 	'MENOR',
-	'RECEBE',
-	'IGUAL',
+
+	# Operadores lógicos
+	'E',
+	'OU',
+	'NEGACAO',
+
+	# simbolos
+	'ABRE_PARENTES',
+	'FECHA_PARENTES',
+	'ABRE_CHAVES',
+	'FECHA_CHAVES',
 	'DOIS_PONTOS',
+	'VIRGULA',
+
+	# Tipos numéricos
+	'NUM_FLUTUANTE',
+	'NUM_INTEIRO',
+
+	'ID',
+
+  'COMENTARIO',
 ]
