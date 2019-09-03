@@ -1,7 +1,11 @@
-inteiro: n
+inteiro: n, d
+d := -6
 inteiro fatorial(inteiro: n)
 	inteiro: fat
-	se n > 0 então {não calcula se n > 0}
+	se n > 0 então {não calcula se n > 0} ss {}
+	{
+		ola mondo
+	}
 		fat := 1
 		repita
 			fat := fat * n

@@ -21,20 +21,20 @@ t_NEGACAO = r'\!'
 
 t_ABRE_PARENTES = r'\('
 t_FECHA_PARENTES = r'\)'
-t_ABRE_CHAVES = r'\{'
-t_FECHA_CHAVES = r'\}'
+t_ABRE_COLCHETES = r'\['
+t_FECHA_COLCHETES = r'\]'
 t_DOIS_PONTOS = r'\:'
 t_VIRGULA = r'\,'
 
 t_ignore = ' \t'
 
 def t_NUM_FLUTUANTE(t):
-	r'\d+\.\d+'
+	r'(\+|\-)?\d+\.(\d+)?'
 	t.value = float(t.value)
 	return t
 
 def t_NUM_INTEIRO(t):
-	r'\d+'
+	r'(\+|\-)?\d+'
 	t.value = int(t.value)
 	return t
 
@@ -44,7 +44,7 @@ def t_newline(t):
 	pass
 
 def t_COMENTARIO(t):
-	r'\{.*\}'
+	r'\{(.|\n)*?\}'
 
 def t_error(t):
 	print("Caracter invalido '%s'" % t.value[0])
