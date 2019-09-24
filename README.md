@@ -4,5 +4,5 @@
 
 Para executar:
 ```shell
-$ python __main__.py <arquivo_de_teste>
+$ python3 __main__.py <arquivo_de_teste>
 ```
