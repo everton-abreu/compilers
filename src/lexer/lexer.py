@@ -1,8 +1,8 @@
 from ply import lex
 
-from .tokens.tokens import tokens
-from .reserved.words import reserved
-from .patterns.patterns import *
+from tokens.tokens import tokens
+from reserved.words import reserved
+from patterns.patterns import *
 
 tokens += list(reserved.values())
 

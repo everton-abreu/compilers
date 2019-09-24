@@ -2,3 +2,5 @@
 
 print("Welcome to systatic file!")
 
+def syntatic():
+	print('ola')
