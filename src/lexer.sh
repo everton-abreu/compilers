@@ -2,9 +2,10 @@ if [[ -d logs ]]
 then
 	echo "existe"
 fi
-
-for file in $(ls lexer/tests)
+TEST_PREFIX="lexer/tests"
+for arc in $(ls $TEST_PREFIX)
 do
 	echo "------------------------------"
-	echo "File: $file"
+	echo $arc
+	python3 __main__.py $TEST_PREFIX/$arc >> logs/"$arc".marks
 done
