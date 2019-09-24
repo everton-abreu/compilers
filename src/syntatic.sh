@@ -7,7 +7,7 @@ then
 	TEST_PREFIX="syntatic/tests"
 	for archive in $(ls $TEST_PREFIX)
 	do
-		python3 syntatic/__test__.py $TEST_PREFIX/$archive
+		python3 __syntatic__.py $TEST_PREFIX/$archive
 		echo "------------------------------"
 	done
 	echo "se chegou aqui deve ter dado certo \o/"
