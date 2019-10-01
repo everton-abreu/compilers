@@ -1,8 +1,8 @@
 # src/__syntatic__.py
 
 import sys
-from lexer.lexer import tokenize
-from syntatic.syntatic import syntatic
+from lexer import tokenize
+from syntatic import syntatic
 
 if (len(sys.argv) < 2):
 	exit(1)

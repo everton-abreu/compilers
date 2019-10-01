@@ -1,7 +1,7 @@
 # src/__lexer__.py
 
 import sys
-from lexer.lexer import tokenize
+from lexer import tokenize
 
 if (len(sys.argv) < 2):
 	exit(1)

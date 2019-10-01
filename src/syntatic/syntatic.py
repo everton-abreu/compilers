@@ -1,6 +1,6 @@
 # src/syntatic/syntatic.py
 
-print("Welcome to systatic file!")
+from lexer.tokens import tokens
 
 def syntatic():
 	print('ola')
