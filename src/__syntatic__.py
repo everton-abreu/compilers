@@ -2,7 +2,7 @@
 
 import sys
 from lexer import tokenize
-from syntatic import syntatic
+from syntatic import parse
 
 if (len(sys.argv) < 2):
 	exit(1)
@@ -14,5 +14,4 @@ logFile = open('trees/' + sys.argv[1].split('.')[0].split('/')[-1] + '.tree', 'w
 
 tokens = tokenize(data)
 
-for token in tokens:
-	logFile.write(str(token) + '\n')
+p = parse(data)

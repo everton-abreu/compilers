@@ -1,1 +1,1 @@
-from syntatic.syntatic import syntatic
+from syntatic.syntatic import syntatic, parse

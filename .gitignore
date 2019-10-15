@@ -4,4 +4,7 @@
 
 .vscode/
 **/logs/
+**/trees/
 **/*.zip
+**/*.out
+src/syntatic/parsetab.py

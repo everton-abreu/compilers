@@ -4,7 +4,7 @@ from lexer.tokens import tokens
 from lexer.reserved import reserved
 from lexer.patterns import *
 
-tokens += list(reserved.values())
+tokens += tuple(reserved.values())
 
 def t_ID(t):
 	r'[a-zãéA-Z_][a-zãéA-Z_0-9]*'

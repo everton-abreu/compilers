@@ -1,6 +1,6 @@
 # tokens/tokens.py
 
-tokens = [
+tokens = (
 	'ATRIBUICAO',
 
 	# Operadores aritméticos
@@ -36,5 +36,5 @@ tokens = [
 
 	'ID',
 
-  'COMENTARIO',
-]
+	'COMENTARIO',
+)
