@@ -2,6 +2,7 @@ from ply import lex
 
 from lexer.tokens import tokens
 from lexer.reserved import reserved
+# pylint: disable=unused-wildcard-import
 from lexer.patterns import *
 
 tokens += tuple(reserved.values())

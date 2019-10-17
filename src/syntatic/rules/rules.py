@@ -1,8 +1,6 @@
 # src/syntatic/rules/rules.py
 from anytree import Node
 from ply import yacc
-from lexer import tokens
-
 
 precendence = (
 	('left', 'PLUS', 'MINUS'),

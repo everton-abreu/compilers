@@ -3,6 +3,7 @@
 import ply.yacc as yacc
 
 from lexer import tokens
+# pylint: disable=unused-wildcard-import
 from syntatic.rules import *
 
 def syntatic():

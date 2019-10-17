@@ -28,14 +28,16 @@ t_VIRGULA = r'\,'
 
 t_ignore = ' \t'
 
+def t_NUM_CIENTIFICO(t):
+	r'[1-9](\.\d+)?(e|E)((\+|-){1})?\d+'
+	return t
+
 def t_NUM_FLUTUANTE(t):
 	r'(\d+)\.(\d+)?'
-	t.value = float(t.value)
 	return t
 
 def t_NUM_INTEIRO(t):
 	r'\d+'
-	t.value = int(t.value)
 	return t
 
 def t_newline(t):

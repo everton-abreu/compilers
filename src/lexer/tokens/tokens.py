@@ -31,6 +31,7 @@ tokens = (
 	'VIRGULA',
 
 	# Tipos numéricos
+	'NUM_CIENTIFICO',
 	'NUM_FLUTUANTE',
 	'NUM_INTEIRO',
 

@@ -1,7 +1,6 @@
 # src/syntatic/rules/errors.py
 from anytree import Node
 from ply import yacc
-from lexer import tokens
 
 def error_msg(error, msg="", but=""):
 	msg_error = "Espera-se " + msg + " na linha " + str(error.lineno)
