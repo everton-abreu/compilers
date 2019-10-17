@@ -2,7 +2,7 @@
 
 import sys
 from anytree import RenderTree
-from anytree.exporter import DotExporter
+from anytree.exporter import UniqueDotExporter
 from lexer import tokenize
 from syntatic import parse
 
@@ -21,4 +21,4 @@ p = parse(data)
 # print(RenderTree(p))
 
 # graphviz needs to be installed for the next line!
-DotExporter(p).to_picture(tree + '.png')
+UniqueDotExporter(p).to_picture(tree + '.png')
