@@ -12,5 +12,4 @@ reserved = {
 	'flutuante': 'FLUTUANTE',
 	'leia': 'LEIA',
 	'escreva': 'ESCREVA',
-	'principal': 'PRINCIPAL',
 }

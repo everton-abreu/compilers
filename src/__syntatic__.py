@@ -1,6 +1,8 @@
 # src/__syntatic__.py
 
 import sys
+from anytree import RenderTree
+from anytree.exporter import DotExporter
 from lexer import tokenize
 from syntatic import parse
 
@@ -10,8 +12,13 @@ if (len(sys.argv) < 2):
 file = open(sys.argv[1], 'r')
 data = file.read()
 
-logFile = open('trees/' + sys.argv[1].split('.')[0].split('/')[-1] + '.tree', 'w')
+tree = 'trees/' + sys.argv[1].split('.')[0].split('/')[-1]
 
-tokens = tokenize(data)
+logFile = open(tree + '.tree', 'w')
 
 p = parse(data)
+
+# print(RenderTree(p))
+
+# graphviz needs to be installed for the next line!
+DotExporter(p).to_picture(tree + '.png')

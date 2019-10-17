@@ -29,12 +29,12 @@ t_VIRGULA = r'\,'
 t_ignore = ' \t'
 
 def t_NUM_FLUTUANTE(t):
-	r'(\+|\-)?(\d+)\.(\d+)?'
+	r'(\d+)\.(\d+)?'
 	t.value = float(t.value)
 	return t
 
 def t_NUM_INTEIRO(t):
-	r'(\+|\-)?\d+'
+	r'\d+'
 	t.value = int(t.value)
 	return t
 
