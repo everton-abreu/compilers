@@ -20,13 +20,13 @@ def p_lista_declaracoes(p):
 	| declaracao'''
 
 	lista_declaracoes = Node('lista_declaracoes')
+	p[0] = lista_declaracoes
 
 	if len(p) == 2:
-		lista_declaracoes.children = [p[1]]
+		p[0].children = [p[1]]
 	elif len(p) == 3:
-		lista_declaracoes.children = [p[1], p[2]]
+		p[0].children = [p[1], p[2]]
 
-	p[0] = lista_declaracoes
 	pass
 
 def p_declaracao(p):
@@ -59,14 +59,14 @@ def p_lista_variaveis(p):
 	| var'''
 
 	lista_variaveis = Node('lista_variaveis')
+	p[0] = lista_variaveis
 
 	if len(p) == 4:
 		VIRGULA = Node('VIRGULA')
-		lista_variaveis.children = [p[1], VIRGULA, p[3]]
+		p[0].children = [p[1], VIRGULA, p[3]]
 	elif len(p) == 2:
-		lista_variaveis.children = [p[1]]
+		p[0].children = [p[1]]
 	
-	p[0] = lista_variaveis
 	pass
 
 def p_var(p):
@@ -74,15 +74,14 @@ def p_var(p):
 	| ID indice'''
 
 	var = Node('var')
+	p[0] = var
 
 	ID = Node('ID')
 
 	if len(p) == 2:
-		var.children = [ID]
+		p[0].children = [ID]
 	elif len(p) == 3:
-		var.children = [ID, p[2]]
-
-	p[0] = var
+		p[0].children = [ID, p[2]]
 	pass
 
 def p_indice(p):
@@ -203,9 +202,13 @@ def p_acao(p):
 	| repita
 	| leia
 	| escreva
-	| retorna'''
+	| retorna
+	| error'''
 
-	acao = Node('acao', children=[p[1]])
+	acao = Node('acao')
+	
+	if p.slice[1].type != 'error':
+		acao.children = [p[1]]
 
 	p[0] = acao
 	pass
@@ -298,7 +301,7 @@ def p_retorna(p):
 
 	FECHA_PARENTES = Node('FECHA_PARENTES')
 
-	retorna = Node('escreva', children=[RETORNA, ABRE_PARENTES, p[3], FECHA_PARENTES])
+	retorna = Node('retorna', children=[RETORNA, ABRE_PARENTES, p[3], FECHA_PARENTES])
 	p[0] = retorna
 	pass
 
@@ -456,7 +459,8 @@ def p_fator(p):
 
 def p_numero(p):
 	'''numero : NUM_INTEIRO
-	| NUM_FLUTUANTE'''
+	| NUM_FLUTUANTE
+	| NUM_CIENTIFICO'''
 
 	NUMERO = Node('NUMERO')
 
