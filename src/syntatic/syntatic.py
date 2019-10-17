@@ -8,7 +8,7 @@ from syntatic.rules import *
 def syntatic():
 	print('ola')
 
-parser = yacc.yacc()
+parser = yacc.yacc(start='programa', optimize=False)
 
 def parse(data, debug = 0):
 	parser.error = 0
