@@ -2,11 +2,6 @@
 from anytree import Node
 from ply import yacc
 
-precendence = (
-	('left', 'PLUS', 'MINUS'),
-	('left', 'TIMES', 'DIVIDE'),
-)
-
 def p_programa(p):
 	'programa : lista_declaracoes'
 
@@ -202,23 +197,16 @@ def p_acao(p):
 	| repita
 	| leia
 	| escreva
-	| retorna
-	| error'''
+	| retorna'''
 
-	acao = Node('acao')
-	
-	if p.slice[1].type != 'error':
-		acao.children = [p[1]]
-
+	acao = Node('acao', children=[p[1]])
 	p[0] = acao
 	pass
 
 def p_comentario(p):
 	'comentario : COMENTARIO'
 
-	COMENTARIO = Node('COMENTARIO')
-
-	comentario = Node('comentario', children=[COMENTARIO])
+	comentario = Node('comentario')
 
 	p[0] = comentario
 	pass

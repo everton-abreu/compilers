@@ -8,9 +8,10 @@ then
 	for archive in $(ls $TEST_PREFIX)
 	do
 		python3 __syntatic__.py $TEST_PREFIX/$archive
-    echo $archive
+		echo ""
+    echo "File $archive"
+		echo ""
 	done
-	echo "se chegou aqui deve ter dado certo \o/"
 else
 	echo "Pasta '$pasta' não existe"
 fi

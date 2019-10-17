@@ -9,7 +9,6 @@ then
 	do
 		python3 __lexer__.py $TEST_PREFIX/$archive
 	done
-	echo "se chegou aqui deve ter dado certo \o/"
 else
 	echo "Pasta '$pasta' não existe"
 fi

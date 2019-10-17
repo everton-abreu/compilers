@@ -18,7 +18,7 @@ logFile = open(tree + '.tree', 'w')
 
 p = parse(data)
 
-# print(RenderTree(p))
+for prefix, cor, no in RenderTree(p):
+	logFile.write(("%s%s\n" % (prefix, no.name)))
 
-# graphviz needs to be installed for the next line!
 UniqueDotExporter(p).to_picture(tree + '.png')
