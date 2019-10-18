@@ -72,7 +72,6 @@ def p_var(p):
 	p[0] = var
 
 	ID = Node('ID', children=[Node(p[1])])
-	print(p[1])
 
 	if len(p) == 2:
 		p[0].children = [ID]
