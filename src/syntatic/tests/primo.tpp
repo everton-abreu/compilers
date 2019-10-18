@@ -16,3 +16,4 @@ inteiro principal()
 		i := i+1
 	até i <= digitado
 fim
+

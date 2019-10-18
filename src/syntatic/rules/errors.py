@@ -15,6 +15,7 @@ def p_cabecalho_error(p):
 	cabecalho = Node('cabecalho com erro')
 
 	p[0] = cabecalho
+	exit(0)
 	pass
 
 def p_lista_variaveis_error(p):
@@ -22,6 +23,7 @@ def p_lista_variaveis_error(p):
 
 	print(error_msg(p[1], msg="'VAR' após ':'", but=("'%s'" % (p[1].value))))
 	p[0] = Node('lista_variaveis com erro')
+	exit(0)
 	pass
 
 def p_declaracao_error(p):
@@ -29,6 +31,7 @@ def p_declaracao_error(p):
 
 	print("ERRROOOU: declaração realizada fora do corpo de função")
 	p[0] = Node('declaracao com erro')
+	exit(0)
 	pass
 
 def p_se_error(p):
@@ -54,7 +57,7 @@ def p_se_error(p):
 		p[0].children = [SE]
 
 		print(error_msg(p.slice[5], msg="faltou o fim"))
-
+	exit(0)
 	pass
 
 # def p_se_error_2(p):
@@ -94,6 +97,8 @@ def p_indice_error(p):
 		p[0].children = [p[1], ABRE_COLCHETES, p[4]]
 
 		print(error_msg(p.slice[4], msg="erro de indice funcao indice_error"))
+
+	exit(0)
 	pass
 
 def p_indice_error_2(p):
@@ -110,6 +115,8 @@ def p_indice_error_2(p):
 
 	indice = Node('indice com erro')
 	p[0] = indice
+
+	exit(0)
 	pass
 
 # def p_numero_error(p):

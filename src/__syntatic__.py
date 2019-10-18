@@ -18,7 +18,7 @@ logFile = open(tree + '.tree', 'w')
 
 p = parse(data)
 
+UniqueDotExporter(p).to_picture(tree + '.png')
+
 for prefix, cor, no in RenderTree(p):
 	logFile.write(("%s%s\n" % (prefix, no.name)))
-
-UniqueDotExporter(p).to_picture(tree + '.png')

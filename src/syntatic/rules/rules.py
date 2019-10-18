@@ -36,7 +36,7 @@ def p_declaracao(p):
 def p_declaracao_variaveis(p):
 	'declaracao_variaveis : tipo DOIS_PONTOS lista_variaveis'
 
-	DOIS_PONTOS = Node('DOIS_PONTOS')
+	DOIS_PONTOS = Node('DOIS_PONTOS', children=[Node(p[2])])
 
 	declaracao_variaveis = Node('declaracao_variaveis', children=[p[1], DOIS_PONTOS, p[3]])
 	p[0] = declaracao_variaveis
@@ -57,7 +57,7 @@ def p_lista_variaveis(p):
 	p[0] = lista_variaveis
 
 	if len(p) == 4:
-		VIRGULA = Node('VIRGULA')
+		VIRGULA = Node('VIRGULA', children=[Node(p[2])])
 		p[0].children = [p[1], VIRGULA, p[3]]
 	elif len(p) == 2:
 		p[0].children = [p[1]]
@@ -71,7 +71,8 @@ def p_var(p):
 	var = Node('var')
 	p[0] = var
 
-	ID = Node('ID')
+	ID = Node('ID', children=[Node(p[1])])
+	print(p[1])
 
 	if len(p) == 2:
 		p[0].children = [ID]
@@ -85,12 +86,16 @@ def p_indice(p):
 
 	indice = Node('indice')
 
-	ABRE_COLCHETES = Node('ABRE_COLCHETES')
-	FECHA_COLCHETES = Node('FECHA_COLCHETES')
 
 	if len(p) == 4:
+		ABRE_COLCHETES = Node('ABRE_COLCHETES', children=[Node(p[1])])
+		FECHA_COLCHETES = Node('FECHA_COLCHETES', children=[Node(p[3])])
+
 		indice.children = [ABRE_COLCHETES, p[2], FECHA_COLCHETES]
 	elif len(p) == 5:
+		ABRE_COLCHETES = Node('ABRE_COLCHETES', children=[Node(p[2])])
+		FECHA_COLCHETES = Node('FECHA_COLCHETES', children=[Node(p[4])])
+
 		indice.children = [p[1], ABRE_COLCHETES, p[3], FECHA_COLCHETES]
 
 	p[0] = indice
@@ -100,7 +105,7 @@ def p_tipo(p):
 	'''tipo : INTEIRO
 	| FLUTUANTE'''
 
-	NO = Node('TIPO')
+	NO = Node('TIPO', children=[Node(p[1])])
 	tipo = Node('tipo', children=[NO])
 
 	p[0] = tipo
@@ -123,13 +128,13 @@ def p_declaracao_funcao(p):
 def p_cabecalho(p):
 	'''cabecalho : ID ABRE_PARENTES lista_parametros FECHA_PARENTES corpo FIM'''
 
-	ID = Node('ID')
+	ID = Node('ID', children=[Node(p[1])])
 
-	ABRE_PARENTES = Node('ABRE_PARENTES')
+	ABRE_PARENTES = Node('ABRE_PARENTES', children=[Node(p[2])])
 
-	FECHA_PARENTES = Node('FECHA_PARENTES')
+	FECHA_PARENTES = Node('FECHA_PARENTES', children=[Node(p[4])])
 
-	FIM = Node('FIM')
+	FIM = Node('FIM', children=[Node(p[6])])
 
 	cabecalho = Node('cabecalho', children=[ID, ABRE_PARENTES, p[3], FECHA_PARENTES, p[5], FIM])
 	p[0] = cabecalho
@@ -144,7 +149,7 @@ def p_lista_parametros(p):
 	lista_parametros = Node('lista_parametros')
 
 	if len(p) == 4:
-		VIRGULA = Node('VIRGULA')
+		VIRGULA = Node('VIRGULA', children=[Node(p[2])])
 
 		lista_parametros.children = [p[1], VIRGULA, p[3]]
 	elif len(p) == 2 and p[1]:
@@ -162,15 +167,15 @@ def p_parametro(p):
 	p[1].parent = parametro
 
 	if p[2] == ':':
-		DOIS_PONTOS = Node('DOIS_PONTOS')
+		DOIS_PONTOS = Node('DOIS_PONTOS', children=[Node(p[2])])
 
-		ID = Node('ID')
+		ID = Node('ID', children=[Node(p[3])])
 
 		parametro.children = [p[1], DOIS_PONTOS, ID]
 	else:
-		ABRE_COLCHETES = Node('ABRE_COLCHETES')
+		ABRE_COLCHETES = Node('ABRE_COLCHETES', children=[Node(p[2])])
 
-		FECHA_COLCHETES = Node('FECHA_COLCHETES')
+		FECHA_COLCHETES = Node('FECHA_COLCHETES', children=[Node(p[3])])
 
 		parametro.children = [p[1], ABRE_COLCHETES, FECHA_COLCHETES]
 
@@ -217,17 +222,18 @@ def p_se(p):
 
 	se = Node('se')
 
-	SE = Node('SE')
+	SE = Node('SE', children=[Node(p[1])])
 
-	ENTAO = Node('ENTAO')
-
-	FIM = Node('FIM')
+	ENTAO = Node('ENTAO', children=[Node(p[3])])
 
 	if len(p) == 6:
+		FIM = Node('FIM', children=[Node(p[5])])
 		se.children = [SE, p[2], ENTAO, p[4], FIM]
+
 	
 	elif len(p) == 8:
-		SENAO = Node('SENAO')
+		SENAO = Node('SENAO', children=[Node(p[5])])
+		FIM = Node('FIM', children=[Node(p[7])])
 
 		se.children = [SE, p[2], ENTAO, p[4], SENAO, p[6], FIM]
 
@@ -237,9 +243,9 @@ def p_se(p):
 def p_repita(p):
 	'''repita : REPITA corpo ATE expressao'''
 
-	REPITA = Node('REPITA')
+	REPITA = Node('REPITA', children=[Node(p[1])])
 
-	ATE = Node('ATE')
+	ATE = Node('ATE', children=[Node(p[3])])
 
 	repita = Node('repita', children=[REPITA, p[2], ATE, p[4]])
 	p[0] = repita
@@ -248,7 +254,7 @@ def p_repita(p):
 def p_atribuicao(p):
 	'''atribuicao : var ATRIBUICAO expressao'''
 
-	ATRIBUICAO = Node('ATRIBUICAO')
+	ATRIBUICAO = Node('ATRIBUICAO', children=[Node(p[2])])
 
 	atribuicao = Node('atribuicao', children=[p[1], ATRIBUICAO, p[3]])
 	p[0] = atribuicao
@@ -257,11 +263,11 @@ def p_atribuicao(p):
 def p_leia(p):
 	'''leia : LEIA ABRE_PARENTES var FECHA_PARENTES'''
 
-	LEIA = Node('LEIA')
+	LEIA = Node('LEIA', children=[Node(p[1])])
 
-	ABRE_PARENTES = Node('ABRE_PARENTES')
+	ABRE_PARENTES = Node('ABRE_PARENTES', children=[Node(p[2])])
 
-	FECHA_PARENTES = Node('FECHA_PARENTES')
+	FECHA_PARENTES = Node('FECHA_PARENTES', children=[Node(p[4])])
 
 	leia = Node('leia', children=[LEIA, ABRE_PARENTES, p[3], FECHA_PARENTES])
 	p[0] = leia
@@ -270,11 +276,11 @@ def p_leia(p):
 def p_escreva(p):
 	'''escreva : ESCREVA ABRE_PARENTES expressao FECHA_PARENTES'''
 
-	ESCREVA = Node('ESCREVA')
+	ESCREVA = Node('ESCREVA', children=[Node(p[1])])
 
-	ABRE_PARENTES = Node('ABRE_PARENTES')
+	ABRE_PARENTES = Node('ABRE_PARENTES', children=[Node(p[2])])
 
-	FECHA_PARENTES = Node('FECHA_PARENTES')
+	FECHA_PARENTES = Node('FECHA_PARENTES', children=[Node(p[4])])
 
 	escreva = Node('escreva', children=[ESCREVA, ABRE_PARENTES, p[3], FECHA_PARENTES])
 	p[0] = escreva
@@ -283,11 +289,11 @@ def p_escreva(p):
 def p_retorna(p):
 	'''retorna : RETORNA ABRE_PARENTES expressao FECHA_PARENTES'''
 
-	RETORNA = Node('RETORNA')
+	RETORNA = Node('RETORNA', children=[Node(p[1])])
 
-	ABRE_PARENTES = Node('ABRE_PARENTES')
+	ABRE_PARENTES = Node('ABRE_PARENTES', children=[Node(p[2])])
 
-	FECHA_PARENTES = Node('FECHA_PARENTES')
+	FECHA_PARENTES = Node('FECHA_PARENTES', children=[Node(p[4])])
 
 	retorna = Node('retorna', children=[RETORNA, ABRE_PARENTES, p[3], FECHA_PARENTES])
 	p[0] = retorna
@@ -380,7 +386,7 @@ def p_operador_relacional(p):
 	| MENOR_IGUAL
 	| MAIOR_IGUAL'''
 
-	OPERADOR = Node('RELACIONAL')
+	OPERADOR = Node('RELACIONAL', children=[Node(p[1])])
 
 	operador_relacional = Node('operador_relacional', children=[OPERADOR])
 	p[0] = operador_relacional
@@ -390,7 +396,7 @@ def p_operador_soma(p):
 	'''operador_soma : ADICAO
 	| SUBTRACAO'''
 
-	OPERADOR = Node('SOMA')
+	OPERADOR = Node('SOMA', children=[Node(p[1])])
 
 	operador_soma = Node('operador_soma', children=[OPERADOR])
 	p[0] = operador_soma
@@ -400,7 +406,7 @@ def p_operador_logico(p):
 	'''operador_logico : E
 	| OU'''
 
-	OPERADOR = Node('LOGICO')
+	OPERADOR = Node('LOGICO', children=[Node(p[1])])
 
 	operador_logico = Node('operador_logico', children=[OPERADOR])
 	p[0] = operador_logico
@@ -409,7 +415,7 @@ def p_operador_logico(p):
 def p_operador_negacao(p):
 	'''operador_negacao : NEGACAO'''
 
-	OPERADOR = Node('NEGACAO')
+	OPERADOR = Node('NEGACAO', children=[Node(p[1])])
 
 	operador_negacao = Node('operador_negacao', children=[OPERADOR])
 	p[0] = operador_negacao
@@ -419,7 +425,7 @@ def p_operador_multiplicacao(p):
 	'''operador_multiplicacao : MULTIPLICACAO
 	| DIVISAO'''
 
-	OPERADOR = Node('MULTIPLICACAO')
+	OPERADOR = Node('MULTIPLICACAO', children=[Node(p[1])])
 
 	operador_multiplicacao = Node('operador_multiplicacao', children=[OPERADOR])
 	p[0] = operador_multiplicacao
@@ -436,9 +442,9 @@ def p_fator(p):
 	if len(p) == 2:
 		fator.children = [p[1]]
 	if len(p) == 4:
-		ABRE_PARENTES = Node('ABRE_PARENTES')
+		ABRE_PARENTES = Node('ABRE_PARENTES', children=[Node(p[1])])
 
-		FECHA_PARENTES = Node('FECHA_PARENTES')
+		FECHA_PARENTES = Node('FECHA_PARENTES', children=[Node(p[3])])
 
 		fator.children = [ABRE_PARENTES, p[2], FECHA_PARENTES]
 
@@ -450,7 +456,7 @@ def p_numero(p):
 	| NUM_FLUTUANTE
 	| NUM_CIENTIFICO'''
 
-	NUMERO = Node('NUMERO')
+	NUMERO = Node('NUMERO', children=[Node(p[1])])
 
 	numero = Node('numero', children=[NUMERO])
 	p[0] = numero
@@ -459,11 +465,11 @@ def p_numero(p):
 def p_chamada_funcao(p):
 	'''chamada_funcao : ID ABRE_PARENTES lista_argumentos FECHA_PARENTES'''
 
-	ID = Node('ID')
+	ID = Node('ID', children=[Node(p[1])])
 
-	ABRE_PARENTES = Node('ABRE_PARENTES')
+	ABRE_PARENTES = Node('ABRE_PARENTES', children=[Node(p[2])])
 
-	FECHA_PARENTES = Node('FECHA_PARENTES')
+	FECHA_PARENTES = Node('FECHA_PARENTES', children=[Node(p[4])])
 
 	chamada_funcao = Node('chamada_funcao', children=[ID, ABRE_PARENTES, p[3], FECHA_PARENTES])
 	p[0] = chamada_funcao
@@ -479,7 +485,7 @@ def p_lista_argumentos(p):
 	if len(p) == 2 and p[1]:
 		lista_argumentos.children = [p[1]]
 	if len(p) == 4:
-		VIRGULA = Node('VIRGULA')
+		VIRGULA = Node('VIRGULA', children=[Node(p[2])])
 
 		lista_argumentos.children = [p[1], VIRGULA, p[3]]
 	p[0] = lista_argumentos
@@ -488,4 +494,5 @@ def p_lista_argumentos(p):
 def p_vazio(p):
 	'vazio :'
 
+	p[0] = Node('vazio')
 	pass
