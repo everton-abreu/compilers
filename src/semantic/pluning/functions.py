@@ -1,35 +1,61 @@
+# pylint: disable=unused-wildcard-import
 from semantic.pluning.basics import *
 
 def s_programa(node):
-  s_lista_declaracoes(node.children[0])
+  lista = s_lista_declaracoes(node.children[0])
+
+  node.children = [ lista ]
   pass
 
 def s_lista_declaracoes(node):
-  if len(node.children) == 2:
-    s_lista_declaracoes(node.children[0])
-    s_declaracao(node.children[1])
+  childs = node.children
+  declaracao = ''
+
+  if len(childs) == 2:
+    lista_declaracoes = s_lista_declaracoes(childs[0])
+    lista_declaracoes = list(lista_declaracoes) if type(lista_declaracoes) == tuple else [ lista_declaracoes ]
+    declaracao = s_declaracao(childs[1])
+
+    lista_declaracoes.append(declaracao)
+
+    node.children = lista_declaracoes
+
+    return node if node.parent.name != 'lista_declaracoes' else node.children
 
   else:
-    s_declaracao(node.children[0])
-
-  pass
+    declaracao = s_declaracao(childs[0])
+    node.children = [ declaracao ]
+    return node if node.parent.name != 'lista_declaracoes' else node.children
 
 def s_declaracao(node):
   child = node.children[0]
 
   if child.name == 'declaracao_funcao':
-    s_declaracao_funcao(child)
+    return s_declaracao_funcao(child)
 
   elif child.name == 'declaracao_variaveis':
-    s_declaracao_variaveis(child)
+    return s_declaracao_variaveis(child)
 
   elif child.name == 'inicializacao_variaveis':
-    s_inicializacao_variaveis(child)
+    return s_inicializacao_variaveis(child)
 
   pass
 
 def s_declaracao_funcao(node):
-  pass
+  childs = node.children
+
+  if len(childs) == 2:
+    tipo = s_tipo(childs[0])
+    cabecalho = s_cabecalho(childs[1])
+
+    cabecalho.children = [tipo] + list(cabecalho.children)
+
+    return cabecalho
+
+  elif len(childs) == 1:
+    cabecalho = s_cabecalho(childs[0])
+
+    return cabecalho
 
 def s_declaracao_variaveis(node):
   childs = node.children
@@ -48,8 +74,60 @@ def s_declaracao_variaveis(node):
 def s_inicializacao_variaveis(node):
   childs = node.children
 
-  node.children = [ s_atribuicao(childs[0]) ]
-  pass
+  atribuicao = s_atribuicao(childs[0])
+
+  return atribuicao
+
+def s_cabecalho(node):
+  childs = node.children
+
+  nome = s_ID(childs[0])
+
+  parametros = s_lista_parametros(childs[2])
+
+  corpo = s_corpo(childs[4])
+
+  nome.children = [ parametros, corpo ]
+
+  return nome
+
+def s_lista_parametros(node):
+  childs = node.children
+  parametro = ''
+
+  if len(childs) == 3:
+    lista_parametros = s_lista_parametros(childs[0])
+    lista_parametros = list(lista_parametros) if type(lista_parametros) == tuple else [ lista_parametros ]
+    parametro = s_parametro(childs[2])
+
+    lista_parametros.append(parametro)
+
+    node.children = lista_parametros
+
+    return node if node.parent.name != 'lista_parametros' else node.children
+
+  else:
+    parametro = s_parametro(childs[0]) if childs[0].name != 'vazio' else childs[0]
+    node.children = [ parametro ]
+    return node if node.parent.name != 'lista_parametros' else node.children
+
+def s_parametro(node):
+  childs = node.children
+
+  if childs[0].name == 'parametro':
+    return s_parametro(childs[0])
+
+  else:
+    tipo = s_tipo(childs[0])
+    dois_pontos = s_dois_pontos(childs[1])
+    nome = s_ID(childs[2])
+
+    dois_pontos.children = [ tipo, nome ]
+
+    return dois_pontos
+
+def s_corpo(node):
+  return node
 
 def s_atribuicao(node):
   childs = node.children
@@ -59,9 +137,8 @@ def s_atribuicao(node):
   expr = s_expressao(childs[2])
 
   attr.children = [ var, expr ]
-  node.children = [ attr ]
 
-  return node
+  return attr
 
 def s_expressao(node):
   child = node.children[0]
