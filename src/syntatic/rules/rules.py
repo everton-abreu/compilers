@@ -194,7 +194,6 @@ def p_corpo(p):
 
 def p_acao(p):
 	'''acao : expressao
-	| comentario
 	| declaracao_variaveis
 	| se
 	| repita
@@ -204,14 +203,6 @@ def p_acao(p):
 
 	acao = Node('acao', children=[p[1]])
 	p[0] = acao
-	pass
-
-def p_comentario(p):
-	'comentario : COMENTARIO'
-
-	comentario = Node('comentario')
-
-	p[0] = comentario
 	pass
 
 def p_se(p):
