@@ -14,4 +14,9 @@ if (len(sys.argv) < 2):
 file = open(sys.argv[1], 'r')
 data = file.read()
 
-semantic()
+tree = parse(data)
+treeFile = 'logs/symbols/base-tree-' + sys.argv[1].split('.')[0].split('/')[-1]
+
+UniqueDotExporter(tree).to_picture(treeFile + '.png')
+
+semantic(tree)
