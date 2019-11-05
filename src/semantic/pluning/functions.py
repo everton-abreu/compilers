@@ -127,7 +127,21 @@ def s_parametro(node):
     return dois_pontos
 
 def s_corpo(node):
-  return node
+  parent = node.parent
+  childs = node.children
+
+  if len(childs) == 2:
+    corpo = s_corpo(childs[0])
+    corpo = list(corpo) if type(corpo) == tuple else [ corpo ]
+    acao = s_acao(childs[1])
+
+    corpo.append(acao)
+
+    node.children = corpo
+    return node if (parent.name == 'cabecalho' or parent.name == 'se') else node.children
+
+  elif len(childs) == 1:
+    return node if (parent.name == 'cabecalho' or parent.name == 'se') else node.children
 
 def s_atribuicao(node):
   childs = node.children
@@ -233,6 +247,9 @@ def s_expressao_unaria(node):
 
     return operador
   pass
+
+def s_acao(node):
+  return node
 
 ## pra baixo ta certo
 
