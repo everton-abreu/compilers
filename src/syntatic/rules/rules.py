@@ -185,11 +185,10 @@ def p_corpo(p):
 	'''corpo : corpo acao
 	| vazio'''
 
-	corpo = Node('corpo')
-
+	corpo = Node('corpo', children=[p[1]])
 	if len(p) == 3:
 		corpo.children = [p[1], p[2]]
-
+	
 	p[0] = corpo
 	pass
 

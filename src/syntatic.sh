@@ -1,6 +1,6 @@
 # src/syntatic.sh
 
-pasta="trees"
+pasta="syntatic/tests"
 
 if [[ -d $pasta ]]
 then
