@@ -4,7 +4,7 @@ flutuante: c
 a := 1 || 1
 
 func(inteiro: a[], flutuante: b)
-
+  {ola}
 fim
 
 inteiro principal()

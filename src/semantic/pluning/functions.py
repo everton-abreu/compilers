@@ -249,7 +249,73 @@ def s_expressao_unaria(node):
   pass
 
 def s_acao(node):
-  return node
+  child = node.children[0]
+
+  if child.name == 'expressao':
+    return s_expressao(child)
+
+  elif child.name == 'declaracao_variaveis':
+    return s_declaracao_variaveis(child)
+
+  elif child.name == 'se':
+    return s_se(child)
+
+  elif child.name == 'repita':
+    return child
+
+  elif child.name == 'leia':
+    return child
+
+  elif child.name == 'escreva':
+    return s_escreva(child)
+
+  elif child.name == 'retorna':
+    return s_retorna(child)
+
+def s_retorna(node):
+  childs = node.children
+  retorna = s_RETORNA(childs[0])
+  expr = s_expressao(childs[2])
+
+  retorna.children = [ expr ]
+  return retorna
+
+def s_RETORNA(node):
+  retorna = node.children[0]
+
+  return retorna
+
+def s_escreva(node):
+  childs = node.children
+  escreva = s_ESCREVA(childs[0])
+  expr = s_expressao(childs[2])
+
+  escreva.children = [ expr ]
+  return escreva
+
+def s_ESCREVA(node):
+  escreva = node.children[0]
+
+  return escreva
+
+def s_se(node):
+  childs = node.children
+
+  se = s_SE(childs[0])
+  expr = s_expressao(childs[1])
+  corpoEntao = s_corpo(childs[3])
+
+  se.children = [ expr, corpoEntao ]
+
+  if len(childs) == 7:
+    corpoSeNao = s_corpo(childs[5])
+
+    se.children = [ expr, corpoEntao, corpoSeNao ]
+
+  return se
+
+def s_SE(node):
+  return node.children[0]
 
 ## pra baixo ta certo
 
