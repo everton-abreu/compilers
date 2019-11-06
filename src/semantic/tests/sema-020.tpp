@@ -4,7 +4,10 @@ flutuante: c
 a := 1 || 1
 
 func(inteiro: a[], flutuante: b)
-  {ola}
+  se 1 < 2 então
+    leia(a[1])
+    b := a[1]
+  fim
 fim
 
 inteiro principal()
