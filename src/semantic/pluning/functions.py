@@ -102,13 +102,13 @@ def s_lista_parametros(node):
 
     lista_parametros.append(parametro)
 
-    node.children = lista_parametros
+    node.children = lista_parametros # filter(lambda el: el.name != 'vazio', lista_parametros)
 
     return node if node.parent.name != 'lista_parametros' else node.children
 
   else:
     parametro = s_parametro(childs[0]) if childs[0].name != 'vazio' else childs[0]
-    node.children = [ parametro ]
+    node.children = filter(lambda el: el.name != 'vazio', [ parametro ])
     return node if node.parent.name != 'lista_parametros' else node.children
 
 def s_parametro(node):
@@ -137,7 +137,7 @@ def s_corpo(node):
 
     corpo.append(acao)
 
-    node.children = corpo
+    node.children = filter(lambda el: el.name != 'vazio', corpo)
     return node if (parent.name == 'cabecalho' or parent.name == 'se') else node.children
 
   elif len(childs) == 1:
@@ -261,16 +261,43 @@ def s_acao(node):
     return s_se(child)
 
   elif child.name == 'repita':
-    return child
+    return s_repita(child)
 
   elif child.name == 'leia':
-    return child
+    return s_leia(child)
 
   elif child.name == 'escreva':
     return s_escreva(child)
 
   elif child.name == 'retorna':
     return s_retorna(child)
+
+def s_repita(node):
+  childs = node.children
+
+  repita = s_REPITA(childs[0])
+  corpo = s_corpo(childs[1])
+  expr = s_expressao(childs[3])
+
+  repita.children = [ corpo, expr ]
+
+  return repita
+
+def s_REPITA(node):
+  return node.children[0]
+
+def s_leia(node):
+  childs = node.children
+
+  leia = s_LEIA(childs[0])
+  var = s_var(childs[2])
+
+  leia.children = [ var ]
+
+  return leia
+
+def s_LEIA(node):
+  return node.children[0]
 
 def s_retorna(node):
   childs = node.children
