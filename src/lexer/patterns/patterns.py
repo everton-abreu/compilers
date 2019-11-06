@@ -45,8 +45,9 @@ def t_newline(t):
 	t.lexer.lineno += len(t.value)
 	pass
 
-def t_COMENTARIO(t):
+def t_COMMENT(t):
 	r'\{(.|\n)*?\}'
+	pass
 
 def t_error(t):
 	print("Caracter invalido '%s'" % t.value[0])

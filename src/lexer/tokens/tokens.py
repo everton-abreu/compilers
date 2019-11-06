@@ -36,6 +36,4 @@ tokens = (
 	'NUM_INTEIRO',
 
 	'ID',
-
-	'COMENTARIO',
 )
