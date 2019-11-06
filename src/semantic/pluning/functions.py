@@ -115,16 +115,19 @@ def s_parametro(node):
   childs = node.children
 
   if childs[0].name == 'parametro':
-    return s_parametro(childs[0])
+    parametro = s_parametro(childs[0])
+
+    parametro.children = list(parametro.children) + list([ child.children[0] for child in childs[1:] ])
+
+    return parametro
 
   else:
     tipo = s_tipo(childs[0])
-    dois_pontos = s_dois_pontos(childs[1])
     nome = s_ID(childs[2])
 
-    dois_pontos.children = [ tipo, nome ]
+    nome.children = [ tipo ]
 
-    return dois_pontos
+    return nome
 
 def s_corpo(node):
   parent = node.parent
