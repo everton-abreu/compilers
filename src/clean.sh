@@ -5,11 +5,8 @@ rm -r **/__pycache__
 rm -r **/**/__pycache__
 
 # Remove log files
-rm **/*.marks
-
-# Remove tree files
-rm **/*.tree
-rm trees/*.png
+rm logs/marks/*.marks
+rm logs/{trees,symbols}/*.png
 
 # Remove zips
 
