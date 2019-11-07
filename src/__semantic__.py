@@ -19,4 +19,6 @@ treeFile = 'logs/symbols/base-tree-' + sys.argv[1].split('.')[0].split('/')[-1]
 
 UniqueDotExporter(tree).to_picture(treeFile + '.png')
 
-semantic(tree)
+newTree = semantic(tree)
+
+UniqueDotExporter(newTree).to_picture(treeFile + '-plunned.png')

@@ -8,9 +8,13 @@ def semantic(tree):
   sem = Semantic(tree)
 
   if not sem.tests():
-    print('Tem erros')
+    print('Erros semanticos encontrados')
+
+    exit(0)
+
   else:
     s_programa(tree)
-    UniqueDotExporter(tree).to_picture('test2.png')
+
+    return tree
 
   pass
