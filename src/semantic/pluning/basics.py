@@ -30,9 +30,6 @@ def s_dois_pontos(node):
 
   return dois_pontos
 
-def s_var(node):
-  return s_ID(node.children[0])
-
 def s_ID(node):
   return node.children[0]
 

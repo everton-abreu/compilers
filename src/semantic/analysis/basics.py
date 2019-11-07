@@ -67,3 +67,39 @@ def g_principal(node):
   principal = dict(match[0]) if len(match) else None
 
   return principal
+
+def novo_scopo(node, level = None, index = 0):
+  childs = node.children
+  nome = node.name
+
+  if nome == 'declaracao_funcao':
+    funcao = s_ID(childs[-1].children[0])
+
+    return True if (not level) else (funcao.name)
+  elif nome == 'se':
+    return True if (not level) else (level + ' se ' + str(index))
+  elif nome == 'repita':
+    return True if (not level) else (level + ' repita ' + str(index))
+
+  return False
+
+def g_tipo(node):
+  tipo = s_tipo(node)
+
+  return tipo.name
+
+def g_variaveis(node):
+  childs = node.children
+
+  if len(childs) == 3:
+    variavel = g_variavel(childs[2])
+    variaveis = g_variaveis(childs[0]) + [ variavel ]
+
+    return variaveis
+
+  elif len(childs) == 1:
+    variavel = g_variavel(childs[0])
+    return [ variavel ]
+
+def g_variavel(node):
+  return node

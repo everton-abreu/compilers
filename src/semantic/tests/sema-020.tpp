@@ -1,4 +1,8 @@
-inteiro: a[2], b
+inteiro: x
+
+x := 2
+
+inteiro: a[x][x], b
 flutuante: c
 
 a[1] := 1 || 1

@@ -406,3 +406,27 @@ def s_lista_argumentos(node):
     node.children = filter(lambda el: el.name != 'vazio', [ argumento ])
     return node if node.parent.name != 'lista_argumentos' else node.children
 
+def s_var(node):
+  childs = node.children
+  id = s_ID(childs[0])
+
+  if len(childs) > 1:
+    indices = s_indices(childs[1])
+
+    id.children = indices
+
+  return id
+
+def s_indices(node):
+  childs = node.children
+
+  if len(childs) == 4:
+    indices = s_indices(childs[0])
+    indice = s_expressao(childs[2])
+
+    return indices + [ indice ]
+
+  else:
+    indice = s_expressao(childs[1])
+
+    return [ indice ]
