@@ -2,6 +2,11 @@
 from anytree import Node
 from ply import yacc
 
+error = False
+
+def has_errors():
+	return error
+
 def error_msg(error, msg="", but=""):
 	msg_error = "ERRROOOU: Espera-se " + msg + " na linha " + str(error.lineno)
 	if len(but):
@@ -15,7 +20,10 @@ def p_cabecalho_error(p):
 	cabecalho = Node('cabecalho com erro')
 
 	p[0] = cabecalho
-	exit(0)
+
+	global error
+
+	error = True
 	pass
 
 def p_lista_variaveis_error(p):
@@ -23,7 +31,10 @@ def p_lista_variaveis_error(p):
 
 	print(error_msg(p[1], msg="'VAR' após ':'", but=("'%s'" % (p[1].value))))
 	p[0] = Node('lista_variaveis com erro')
-	exit(0)
+
+	global error
+
+	error = True
 	pass
 
 def p_declaracao_error(p):
@@ -31,7 +42,10 @@ def p_declaracao_error(p):
 
 	print("ERRROOOU: declaração realizada fora do corpo de função")
 	p[0] = Node('declaracao com erro')
-	exit(0)
+
+	global error
+
+	error = True
 	pass
 
 def p_se_error(p):
@@ -57,13 +71,11 @@ def p_se_error(p):
 		p[0].children = [SE]
 
 		print(error_msg(p.slice[5], msg="faltou o fim"))
-	exit(0)
+
+	global error
+
+	error = True
 	pass
-
-# def p_se_error_2(p):
-# 	'''se : SE expressao ENTAO corpo SENAO corpo error'''
-
-# 	pass
 
 def p_indice_error(p):
 	'''indice : indice ABRE_COLCHETES expressao error
@@ -98,7 +110,9 @@ def p_indice_error(p):
 
 		print(error_msg(p.slice[4], msg="erro de indice funcao indice_error"))
 
-	exit(0)
+	global error
+
+	error = True
 	pass
 
 def p_indice_error_2(p):
@@ -116,25 +130,17 @@ def p_indice_error_2(p):
 	indice = Node('indice com erro')
 	p[0] = indice
 
-	exit(0)
+	global error
+
+	error = True
 	pass
-
-# def p_numero_error(p):
-# 	'''numero : error'''
-
-# 	if p.slice[1].type == 'error':
-# 		print("Erro de declaracao na linha %s, espera-se um numero, mas %s" % (p.slice[1].lineno, p[1]))
-
-# 	numero = Node('numero com erro')
-# 	p[0] = numero
-# 	pass
 
 def p_error(p):
-	# if p:
-	# 	print("erro token %s linha %d" % (p.value, p.lineno))
-	# 	# print("erro sintático: não foi possível reconhecer '%s' na linha %d" % (p.value, p.lineno))
+	global error
+
+	error = True
+
 	if p == None:
 		print("erro sintático: definições incompletas!")
-		# exit(0)
-	pass
 
+	pass
