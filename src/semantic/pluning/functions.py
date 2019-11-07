@@ -66,7 +66,6 @@ def s_declaracao_variaveis(node):
   childs[2].children = lista
   lista_variaveis = childs[2]
 
-  # Poda do subarvore 'declaracao_de_variaveis'
   dois_pontos.children = [tipo, lista_variaveis]
 
   return dois_pontos
@@ -368,7 +367,7 @@ def s_fator(node):
     return expr
 
   elif childs[0].name == 'chamada_funcao':
-    return childs[0] # tem q fazer a auxiliar
+    return s_chamada_funcao(childs[0])
 
   elif childs[0].name == 'var':
     return s_var(childs[0])
@@ -376,3 +375,34 @@ def s_fator(node):
   elif childs[0].name == 'numero':
     return s_numero(childs[0])
   pass
+
+def s_chamada_funcao(node):
+  childs = node.children
+
+  funcao = s_ID(childs[0])
+  argumentos = s_lista_argumentos(childs[2])
+
+  funcao.children = [ argumentos ]
+
+  return funcao
+
+def s_lista_argumentos(node):
+  childs = node.children
+  argumento = ''
+
+  if len(childs) == 3:
+    lista_argumentos = s_lista_argumentos(childs[0])
+    lista_argumentos = list(lista_argumentos) if type(lista_argumentos) == tuple else [ lista_argumentos ]
+    argumento = s_expressao(childs[2])
+
+    lista_argumentos.append(argumento)
+
+    node.children = lista_argumentos # filter(lambda el: el.name != 'vazio', lista_argumentos)
+
+    return node if node.parent.name != 'lista_argumentos' else node.children
+
+  else:
+    argumento = s_expressao(childs[0]) if childs[0].name != 'vazio' else childs[0]
+    node.children = filter(lambda el: el.name != 'vazio', [ argumento ])
+    return node if node.parent.name != 'lista_argumentos' else node.children
+

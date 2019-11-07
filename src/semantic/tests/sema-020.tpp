@@ -1,7 +1,7 @@
-inteiro: a, b
+inteiro: a[2], b
 flutuante: c
 
-a := 1 || 1
+a[1] := 1 || 1
 
 func(inteiro: a[], flutuante: b)
   se 1 < 2 então
@@ -11,8 +11,10 @@ func(inteiro: a[], flutuante: b)
 fim
 
 inteiro principal()
-  a := 2
+  a[2] := 2
   b := 3
+  func(a, b)
+  func()
   se 1 > 0 então
     escreva(0)
   fim
