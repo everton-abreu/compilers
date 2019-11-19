@@ -1,5 +1,6 @@
 # pylint: disable=unused-wildcard-import
 from semantic.pluning.basics import *
+from semantic.pluning.functions import s_indices
 
 def g_alinha_declaracoes(node):
   childs = node.children
@@ -18,6 +19,21 @@ def g_alinha_declaracoes(node):
 
 def g_declaracao(node):
   return node.children[0]
+
+def g_alinha_acoes(node):
+  childs = node.children
+
+  if len(childs) == 2:
+    acao = childs[1].children[0]
+    acoes = g_alinha_acoes(childs[0]) + [ acao ]
+
+    return acoes
+
+  elif len(childs) == 1:
+    acao = [ childs[0] ] if childs[0].name != 'vazio' else []
+    return acao
+
+  pass
 
 def g_funcoes(node):
   declaracoes = g_alinha_declaracoes(node)
@@ -75,7 +91,7 @@ def novo_scopo(node, level = None, index = 0):
   if nome == 'declaracao_funcao':
     funcao = s_ID(childs[-1].children[0])
 
-    return True if (not level) else (funcao.name)
+    return True if (not level) else (level + ' ' + funcao.name)
   elif nome == 'se':
     return True if (not level) else (level + ' se ' + str(index))
   elif nome == 'repita':
@@ -102,4 +118,41 @@ def g_variaveis(node):
     return [ variavel ]
 
 def g_variavel(node):
-  return node
+  childs = node.children
+
+  if len(childs) == 1:
+    id = childs[0].children[0]
+    return tuple([ id ])
+
+  else:
+    id = childs[0].children[0]
+    indice = childs[1]
+
+    return tuple([ id, indice ])
+
+  pass
+
+def slice_scopo(scopo):
+  count = 0
+
+  while len(scopo[-1]) or count == 0:
+    scopo_parcionado = scopo[-1].split(' ')
+
+    ancestral = scopo_parcionado
+
+    if len(scopo_parcionado) > 1:
+      try:
+        if (type(int(scopo_parcionado[-1])) == int):
+          ancestral = scopo_parcionado[: -2]
+      except BaseException as error:
+        error = error
+        pass
+    if count == 0:
+      ancestral = ancestral if scopo[0] != ' '.join(ancestral) else ancestral[: -1]
+      scopo = [ ' '.join(ancestral) ]
+      count = 1
+
+    else:
+      scopo.append(' '.join(ancestral[: -1]))
+
+  return scopo[: -1]
