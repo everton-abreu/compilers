@@ -140,10 +140,10 @@ def s_corpo(node):
     corpo.append(acao)
 
     node.children = filter(lambda el: el.name != 'vazio', corpo)
-    return node if (parent.name == 'cabecalho' or parent.name == 'se') else node.children
+    return node if (parent.name != 'corpo') else node.children
 
   elif len(childs) == 1:
-    return node if (parent.name == 'cabecalho' or parent.name == 'se') else node.children
+    return node if (parent.name != 'corpo') else node.children
 
 def s_atribuicao(node):
   childs = node.children
@@ -240,10 +240,10 @@ def s_expressao_unaria(node):
   if len(childs) == 1:
     return s_fator(childs[0])
 
-  elif len(childs) == 3:
-    operador = s_operador(childs[1])
+  elif len(childs) == 2:
+    operador = s_operador(childs[0])
 
-    fator = s_fator(childs[0])
+    fator = s_fator(childs[1])
 
     operador.children = [ fator ]
 
@@ -280,7 +280,7 @@ def s_repita(node):
   repita = s_REPITA(childs[0])
   corpo = s_corpo(childs[1])
   expr = s_expressao(childs[3])
-
+  print(repita, corpo, expr)
   repita.children = [ corpo, expr ]
 
   return repita
