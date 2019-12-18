@@ -29,6 +29,13 @@ class CustomTable:
       return True
 
     return False
+  def tem_ID_no_scopo(self, nome, scopo):
+    item = filter(lambda it: (it['nome'] == nome and it['scopo'] == scopo), self._data)
+
+    if list(item):
+      return True
+
+    return False
 
   def get_item(self, nome, scopo):
     item = filter(lambda it: (it['nome'] == nome and it['scopo'] in scopo), self._data)

@@ -64,7 +64,6 @@ class Semantic:
     tipo = node_tipo.name
 
     variaveis = get_lista_variaveis(childs[2])
-    # print(tipo, variaveis)
 
     for v in variaveis:
       variavel = {
@@ -75,6 +74,7 @@ class Semantic:
         'e': 'variavel',
         'inicializada': False,
         'usada': False,
+        'warning': False,
         'dimensao': 0
       }
 
@@ -86,11 +86,14 @@ class Semantic:
         if False in dimensao[1]:
           print('Erro: índice de array \'%s\' não inteiro' % (variavel['nome']))
 
-      if (not self.__table.tem_ID(variavel["nome"], variavel["scopo"])):
+      if (not self.__table.tem_ID_no_scopo(variavel["nome"], variavel["scopo"])):
         self.__table.add(variavel)
 
       else:
-        print("ja existe", variavel)
+        var = self.__table.get_item(variavel['nome'], variavel['scopo'])
+        if not var["warning"]:
+          var['warning'] = True
+          print("Aviso: Variável '%s' já declarada anteriormente" % variavel["nome"])
 
     return True
 
@@ -150,8 +153,6 @@ class Semantic:
       else:
         print("ja existe a função '%s'" % (nome))
 
-      return True
-
     else:
       nome = get_tipo(childs[0]).name
       self.__scopo = scopo_antigo + '.' + nome
@@ -171,8 +172,6 @@ class Semantic:
 
       else:
         print("ja existe a função '%s'" % (nome))
-
-      return True
 
     self.__scopo = scopo_antigo
     pass
@@ -201,7 +200,9 @@ class Semantic:
 
     if nome == 'expressao':
       self.__check_expressao(node.children[0])
-    pass
+    
+    elif nome == 'declaracao_variaveis':
+      self.__check_declaracao_variaveis(node)
 
   def __check_expressao(self, node):
     childs = node.children
@@ -230,8 +231,47 @@ class Semantic:
     if self.__table.tem_ID(var[0], self.__scopo):
       symbol = self.__table.get_item(var[0], self.__scopo)
       symbol['inicializada'] = True
-    else:
-      pass
+
+      nodes = search.findall(childs[2],
+        filter_ = lambda n: (n.name == 'chamada_funcao'
+          or (n.name == 'numero'
+            and not 'chamada_funcao' in [ancestor.name for ancestor in n.ancestors ])
+          or n.name == 'var'))
+
+      vars = list(filter(lambda n: n.name == "var" , nodes))
+      funcs = list(filter(lambda n: n.name == "chamada_funcao" , nodes))
+      numeros = list(filter(lambda n: n.name == "numero" , nodes))
+
+      for v in vars:
+        v_name = get_tipo(v).name
+        if not self.__table.tem_ID(v_name, self.__scopo):
+          print("Erro: Variável '%s' não declarada" % (v_name))
+        else:
+          var = self.__table.get_ID(v_name)
+          var["usada"] = True
+
+          if symbol['tipo'] != var['tipo']:
+            print("Aviso: Atribuição de tipos distintos '%s' %s e '%s' %s" % (symbol["nome"], symbol["tipo"], var['nome'], var['tipo']))
+
+      for f in funcs:
+        symbol['usada'] = True
+        f_nome = get_tipo(f).name
+        if not self.__table.get_funcao(f_nome):
+          print("Erro: Chamada a função '%s' que não foi declarada" % (f_nome))
+        else:
+          func = self.__table.get_funcao(f_nome)
+
+          if symbol['tipo'] != func['tipo']:
+            print("Aviso: Atribuição de tipos distintos '%s' %s e '%s' %s" % (symbol["nome"], symbol["tipo"], func['nome'], "retorna " + func['tipo']))
+
+      for n in numeros:
+        symbol['usada'] = True
+
+        n_tipo = get_tipo(n.parent).name
+      
+        if symbol['tipo'] != n_tipo:
+          print("Aviso: Coerção implícita do valor de '%s'" % (symbol["nome"]))
+
     pass
 
   def __check_declaracao_principal(self, node):
@@ -258,14 +298,15 @@ class Semantic:
   def __check_variaveis_nao_utilizadas(self):
     variaveis = self.__table.lista()
 
-    nao_inicializadas = list(filter(lambda x: (x['e'] == 'variavel' and x['inicializada'] == False), variaveis))
+    nao_inicializadas = list(filter(lambda x: (x['e'] == 'variavel' and (x['inicializada'] == False or x['usada'] == False)), variaveis))
 
     for v in nao_inicializadas:
-      if v['usada'] == False:
-        print('Aviso: variavel \'%s\' do scopo \'%s\' declarada e nao utilizada' % (v['nome'], v['scopo']))
+      if not v['warning']:
+        if v['usada'] == False:
+          print('Aviso: variavel \'%s\' do scopo \'%s\' declarada e nao utilizada' % (v['nome'], v['scopo']))
 
-      elif v['inicializada'] == False:
-        print('Aviso: variavel \'%s\' do scopo \'%s\' declarada e nao inicializada' % (v['nome'], v['scopo']))
+        elif v['inicializada'] == False:
+          print('Aviso: variavel \'%s\' do scopo \'%s\' declarada e nao inicializada' % (v['nome'], v['scopo']))
 
     pass
 
