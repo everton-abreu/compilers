@@ -75,7 +75,8 @@ def get_indice(node, table):
         print('Aviso: Variável \'%s\' não declarada.' % (var))
       
       elif exists['tipo'] == 'inteiro':
-        return 
+        exists['usada'] = True
+        return ('inteiro', 1)
       else:
         exists['usada'] = True
       return ('inteiro', -2)

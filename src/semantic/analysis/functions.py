@@ -177,6 +177,18 @@ class Semantic:
     self.__scopo = scopo_antigo
     pass
 
+  def __check_chamada_funcao(self, node):
+    childs = node.children
+    id = get_tipo(node).name
+
+    funcao = self.__table.get_funcao(id)
+
+    if not funcao:
+      print("Erro: Chamada a função '%s' que não foi declarada" % (id))
+      self.success = False
+
+    pass
+
   def __check_corpo(self, node):
     acoes = get_corpo(node)
 
@@ -192,11 +204,18 @@ class Semantic:
     pass
 
   def __check_expressao(self, node):
+    childs = node.children
     nome = node.name
 
+    if ("expressao" in nome and len(childs) == 1):
+      return self.__check_expressao(childs[0])
     if nome == 'atribuicao':
       self.__check_atribuicao(node)
-    pass
+
+    if nome == 'fator':
+      if childs[0].name =='chamada_funcao':
+        self.__check_chamada_funcao(childs[0])
+        pass
 
   def __check_atribuicao(self, node):
     childs = node.children
@@ -212,7 +231,7 @@ class Semantic:
       symbol = self.__table.get_item(var[0], self.__scopo)
       symbol['inicializada'] = True
     else:
-      print("nao existe")
+      pass
     pass
 
   def __check_declaracao_principal(self, node):

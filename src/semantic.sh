@@ -5,7 +5,7 @@ pasta="logs/symbols"
 if [[ -d $pasta ]]
 then
   TEST_PREFIX="semantic/tests"
-  arquivo="$TEST_PREFIX/sema-002.tpp"
+  arquivo="$TEST_PREFIX/sema-003.tpp"
   for archive in $(ls $TEST_PREFIX)
   do
     # python3 __semantic__.py $TEST_PREFIX/$archive
