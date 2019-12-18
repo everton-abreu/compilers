@@ -1,200 +1,259 @@
 # pylint: disable=unused-wildcard-import
-from semantic.pluning.basics import *
+from anytree import search
 from semantic.analysis.basics import *
-from pprint import pprint
-
-class CustomTable:
-  def __init__(self):
-    self._data = []
-
-  def add(self, dicionario = None, tipo = None, nome = None, node = None, scopo = None, e_funcao = None, args = None):
-    item = {
-      'tipo': tipo,
-      'nome': nome,
-      'node': node,
-      'scopo': scopo,
-      'e_funcao': e_funcao,
-      'argumentos': args
-    } if not dicionario else dicionario
-
-    ja_existe = self.tem_ID(item["nome"], item["scopo"])
-
-    if ja_existe:
-      return False
-
-    self._data.append(item)
-
-    return True
-
-  def tem_ID(self, nome, scopo):
-    item = filter(lambda it: (it['nome'] == nome and it['scopo'] == scopo), self._data)
-
-    if list(item):
-      return True
-
-    return False
-
-  def get_ID(self, nome):
-    itens = list(filter(lambda it: (it['nome'] == nome), self._data))
-
-    if itens:
-      return itens[-1]
-
-    return None
-
-  def lista(self):
-    return self._data
-
-  def __repr__(self):
-    return str(list(self._data))
-
-  pass
+from semantic.analysis.table import CustomTable
 
 class Semantic:
   def __init__(self, root):
     self.__root = root
-    self._table = CustomTable()
+    self.__table = CustomTable()
+    self.success = True
+    self.__scopo = "global"
 
     pass
 
   def tests(self):
-    self.__varre(self.__root)
 
-    [ print(v) for v in self._table.lista() ]
+    lista_declaracoes = self.__root.children[0]
 
-    if not self.__a_tem_principal(self.__root):
-      print('Erro: Função \'pricipal\' não foi declarada.')
-      return False
+    # print('******************** Iniciando testes ********************')
 
-    elif not self.__a_principal_retorna_inteiro(self.__root):
-      print('Erro: Tipo de retorno da função \'principal\' não foi especificado como inteiro.')
-      return False
+    self.__check_lista_declaracoes(lista_declaracoes)
+    # print('*************** lista declaracoes = False ****************')
 
-    elif not self.__a_principal_retorna(self.__root):
-      print('Erro: Função \'principal\' deveria retornar inteiro, mas retorna vazio.')
-      return False
+    self.__check_variaveis_nao_utilizadas()
+
+    self.__check_retornos()
+
+    if not self.__check_declaracao_principal(lista_declaracoes):
+      print('Erro: Função principal não declarada')
+
+    # print('******************* Finalizando testes *******************')
+    # print('******************* Tabela de simbolos *******************')
+
+    # [ print(item) for item in self.__table.lista() ]
 
     return True
 
-  def __varre(self, node, level = 'global'):
-    childs = node.children
+  def __check_lista_declaracoes(self, node):
+    declaracoes = get_lista_declaracoes(node)
 
-    if node.name == 'lista_declaracoes':
-      lista_declaracoes = g_alinha_declaracoes(node)
+    results = [ self.__check_declaracao(declaracao) for declaracao in declaracoes ]
 
-      [ self.__varre(declaracao, level) for declaracao in lista_declaracoes ]
+    return True if False not in results else False
 
-    elif node.name == 'declaracao_variaveis':
-      self.__a_declaracao_variaveis(node, level)
+  def __check_declaracao(self, node):
+    name = node.name
 
-    elif node.name == 'corpo':
-      self.__a_corpo(node, level)
+    if name == 'declaracao_variaveis':
+      return self.__check_declaracao_variaveis(node)
 
-    elif node.name == 'vazio':
-      pass
+    elif name == 'inicializacao_variaveis':
+      return self.__check_declaracao_inicializacao(node)
 
     else:
-      for ind, child in enumerate(childs):
-
-        current_level = level if (not novo_scopo(child)) else novo_scopo(child, level = level, index = ind)
-
-        self.__varre(child, current_level)
-
-      pass
+      return self.__check_declaracao_funcao(node)
 
     pass
 
-  def __a_declaracao_variaveis(self, node, level):
+  def __check_declaracao_variaveis(self, node):
     childs = node.children
 
-    tipo = g_tipo(childs[0])
-    variaveis = g_variaveis(childs[2])
+    node_tipo = get_tipo(childs[0])
 
-    scopo = [ level ]
+    tipo = node_tipo.name
 
-    scopos_ancestrais = slice_scopo(scopo)
-    scopos_ancestrais = scopos_ancestrais
+    variaveis = get_lista_variaveis(childs[2])
+    # print(tipo, variaveis)
 
     for v in variaveis:
       variavel = {
         'tipo': tipo,
-        'nome': v[0].name,
+        'nome': get_tipo(v).name,# A funcao pega o primeiro no filho do primeiro filho
         'node': None,
-        'scopo': level,
+        'scopo': self.__scopo,
+        'e': 'variavel',
+        'inicializada': False,
+        'usada': False,
+        'dimensao': 0
       }
 
-      # if (not self.__a_indices(level, v[1])):
-      #   print('indices invalidos')
+      if len(v.children) > 1:
+        dimensao = self.__check_indice(v.children[1])
 
-      if (not self._table.tem_ID(variavel["nome"], variavel["scopo"])):
-        self._table.add(variavel)
+        variavel['dimensao'] = dimensao[0]
+        
+        if False in dimensao[1]:
+          print('Erro: índice de array \'%s\' não inteiro' % (variavel['nome']))
+
+      if (not self.__table.tem_ID(variavel["nome"], variavel["scopo"])):
+        self.__table.add(variavel)
 
       else:
         print("ja existe", variavel)
 
-    pass
+    return True
 
-  def __a_corpo(self, node, level):
-    acoes = g_alinha_acoes(node)
+  def __check_indice(self, node):
+    childs = node.children
+    indices = []
 
-    [ print(ind, acao.name) for ind, acao in enumerate(acoes) ]
+    if len(childs) > 3:
+      indices = self.__check_indice(childs[0])
+      indice = self.__check_tipo_indice(childs[2])
 
-    for ind, child in enumerate(acoes):
+      indices.append(indice[1] if (indice[0] == 'inteiro') else False)
 
-      current_level = level if (not novo_scopo(child)) else novo_scopo(child, level = level, index = ind)
+    elif len(childs) == 3:
+      indice = self.__check_tipo_indice(childs[1])
 
-      self.__varre(child, current_level)
+      indices.append(indice[1] if (indice[0] == 'inteiro') else False)
 
-    pass
-
-  def __erro(self, node, code = 0):
-
-    if code == 0:
-      print('ERRROOOU:', node.name, ' não foi declarado')
-
-    elif code == 1:
-      print('WARNING:', node.name, ' não foi inicializado')
-
-    elif code == 2:
-      print('ERRROOOU:', node.name, ' tipo invalido')
-
+    if node.parent.name == 'indice':
+      return indices
     else:
-      print('ERRROOOU:', node.name, ' não foi')
+      return len(indices), indices
 
-  def __a_tem_principal(self, node):
-    principal = g_principal(node)
+  def __check_tipo_indice(self, node):
+    indice = get_indice(node, self.__table)
+    return indice
 
-    return True if principal else False
-
-  def __a_principal_retorna_inteiro(self, node):
-    principal = g_principal(node)
-
-    if not principal['tipo']:
-      return False
-
-    elif principal['tipo'] != 'inteiro':
-      return False
-
-    else:
-      return True
-
-  def __a_principal_retorna(self, node):
-    principal = g_principal(node)
-    principal = principal
+  def __check_declaracao_inicializacao(self, node):
 
     return True
 
-  def __a_indices(self, scopo, indices = None):
-    invalido = False
+  def __check_declaracao_funcao(self, node):
+    childs = node.children
+    scopo_antigo = self.__scopo
+    tipo = None
 
-    if (not indices):
-      return True
+    if len(childs) > 1:
+      tipo = get_tipo(childs[0]).name
+      nome = get_tipo(childs[1]).name
+      self.__scopo = scopo_antigo + '.' + nome
 
-    for ind in indices:
-      if (not self._table.tem_ID(ind.name, scopo)):
-        self.__erro(ind, 0)
+      self.__check_corpo(childs[1].children[4])
+
+      funcao = {
+          'tipo': tipo,
+          'nome': nome,
+          'node': node,
+          'scopo': self.__scopo,
+          'e': 'funcao',
+          'usada': False,
+          'parametros': []
+      }
+
+      if (not self.__table.get_funcao(nome)):
+          self.__table.add(funcao)
 
       else:
-        invalido = True
+        print("ja existe a função '%s'" % (nome))
 
-    return invalido
+      return True
+
+    else:
+      nome = get_tipo(childs[0]).name
+      self.__scopo = scopo_antigo + '.' + nome
+
+      funcao = {
+          'tipo': tipo,
+          'nome': nome,
+          'node': node,
+          'scopo': self.__scopo,
+          'e': 'funcao',
+          'usada': False,
+          'parametros': []
+      }
+
+      if (not self.__table.get_funcao(nome)):
+          self.__table.add(funcao)
+
+      else:
+        print("ja existe a função '%s'" % (nome))
+
+      return True
+
+    self.__scopo = scopo_antigo
+    pass
+
+  def __check_corpo(self, node):
+    acoes = get_corpo(node)
+
+    for acao in acoes:
+      self.__check_acao(acao)
+    pass
+
+  def __check_acao(self, node):
+    nome = node.name
+
+    if nome == 'expressao':
+      self.__check_expressao(node.children[0])
+    pass
+
+  def __check_expressao(self, node):
+    nome = node.name
+
+    if nome == 'atribuicao':
+      self.__check_atribuicao(node)
+    pass
+
+  def __check_atribuicao(self, node):
+    childs = node.children
+
+    var = None
+    if len(childs[0].children) > 1:
+      var = (get_tipo(childs[0]).name, self.__check_indice(childs[0].children[1]))
+    
+    else:
+      var = (get_tipo(childs[0]).name,  (0, 0))
+
+    if self.__table.tem_ID(var[0], self.__scopo):
+      symbol = self.__table.get_item(var[0], self.__scopo)
+      symbol['inicializada'] = True
+    else:
+      print("nao existe")
+    pass
+
+  def __check_declaracao_principal(self, node):
+    declaracoes = get_lista_declaracoes(node)
+
+    results = [ self.__check_principal(declaracao) for declaracao in declaracoes ]
+
+    return True if True in results else False
+
+  def __check_principal(self, node):
+    name = node.name
+    childs = node.children
+
+    if (name != 'declaracao_funcao'):
+      return False
+    if get_tipo(childs[-1]).name != 'principal':# A funcao pega o primeiro no filho do primeiro filho
+      return False
+    returns = list(search.findall(node, filter_ = lambda n: (n.name == 'retorna' and n.parent.name == 'acao')))
+
+    if len(returns) < 1:
+      print("Erro: Função principal deveria retornar inteiro, mas retorna vazio")
+    return True
+
+  def __check_variaveis_nao_utilizadas(self):
+    variaveis = self.__table.lista()
+
+    nao_inicializadas = list(filter(lambda x: (x['e'] == 'variavel' and x['inicializada'] == False), variaveis))
+
+    for v in nao_inicializadas:
+      if v['usada'] == False:
+        print('Aviso: variavel \'%s\' do scopo \'%s\' declarada e nao utilizada' % (v['nome'], v['scopo']))
+
+      elif v['inicializada'] == False:
+        print('Aviso: variavel \'%s\' do scopo \'%s\' declarada e nao inicializada' % (v['nome'], v['scopo']))
+
+    pass
+
+  def __check_retornos(self):
+    funcoes = self.__table.get_funcoes()
+
+    for funcao in funcoes:
+      pass
+    return True
+  pass

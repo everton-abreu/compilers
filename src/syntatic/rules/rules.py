@@ -445,7 +445,13 @@ def p_numero(p):
 	| NUM_FLUTUANTE
 	| NUM_CIENTIFICO'''
 
-	NUMERO = Node('NUMERO', children=[Node(p[1])])
+	tipo = 'inteiro'
+	num = str(p[1])
+
+	if len(num.split('.')) > 1 or len(num.split('E')) > 1 or len(num.split('e')) > 1:
+		tipo = 'flutuante'
+
+	NUMERO = Node(tipo, children=[Node(p[1])])
 
 	numero = Node('numero', children=[NUMERO])
 	p[0] = numero

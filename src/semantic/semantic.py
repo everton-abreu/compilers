@@ -1,8 +1,7 @@
 # src/semantic/semantic.py
 from anytree.exporter import UniqueDotExporter
-from semantic.pluning import s_programa
-# pylint: disable=unused-wildcard-import
 from semantic.analysis import Semantic
+from semantic.pluning import s_programa
 
 def semantic(tree):
   sem = Semantic(tree)
@@ -11,10 +10,9 @@ def semantic(tree):
     print('Erros semanticos encontrados')
 
     exit(0)
-
+  
   else:
     s_programa(tree)
 
-    return tree
+  return tree
 
-  pass
