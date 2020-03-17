@@ -10,4 +10,6 @@ reserved = {
 	'retorna': 'RETORNA',
 	'inteiro': 'INTEIRO',
 	'flutuante': 'FLUTUANTE',
+	'leia': 'LEIA',
+	'escreva': 'ESCREVA',
 }

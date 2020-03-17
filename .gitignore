@@ -1,4 +1,10 @@
+# .gitignore
 
 **/__pycache__
-**/ply-master/
-**/ply/
+
+.vscode/
+logs/
+**/trees/
+**/*.zip
+**/*.out
+src/syntatic/parsetab.py
